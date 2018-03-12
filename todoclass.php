@@ -5,7 +5,14 @@
 <p>
     <?php
     class Task {
-        protected $server = '127.0.0.1';
+
+        public function Subj($subject){
+            return $this->subject = $subject;
+        }
+    }
+
+    class DB{
+    protected $server = '127.0.0.1';
         protected $user = 'root';
         protected $pass = 'astral';
         protected $data = 'todo_base';
@@ -20,42 +27,14 @@
                 printf("Connection failed: %s\/", mysqli_connect_error());
                 exit();
             }
-        }
-        public function Subj($subject){
-            return $this->subject = $subject;
-        }
-    }
-
-    class Repository extends Task
-    {
-
-        function List()
-        {
-            $connection = new mysqli($this->server, $this->user, $this->pass, $this->data);
+            }
+        public function Get() {
+            $connection = new mysqli( $this->server, $this->user, $this->pass, $this->data );
             $res = "SELECT * FROM tasks";
             $result = $connection->query($res);
             return $result;
         }
-//        public function getId($id)
-//        {
-//            $connection = new mysqli( $this->server, $this->user, $this->pass, $this->data );
-//            $id = "SELECT '$id' FROM tasks";
-//            $result = $connection->query($id);
-//            $row = $result->fetch_array(MYSQLI_ASSOC);
-//        }
-//        public function delTask ($id) {
-//            $connection = new mysqli( $this->server, $this->user, $this->pass, $this->data );
-//            if (isset($_POST['del_submit'])) {
-//                if(!empty($id)){
-//                    $id = "DELETE FROM tasks WHERE id = $id";
-//                    $connection->query($id);
-//                }
-//            }
-//        }
-
-        public function Save($subject)
-        {
-
+        public function Saved($subject){
             $connection = new mysqli($this->server, $this->user, $this->pass, $this->data);
 
             if (isset($_POST['submit'])) {
@@ -67,11 +46,28 @@
             }
         }
 
+    }
+    
+    
+    class Repository extends DB
+    {
+        function List()
+        {
+            return $this->Get();
+        }
+
+        public function Save($subject)
+        {
+            $this->Saved($subject);
+        }
+
         public function New()
         {
             return new Task();
         }
     }
+    
+    
 
     $con = new Repository();
     $tasks = $con->New();
