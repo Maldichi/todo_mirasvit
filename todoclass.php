@@ -5,55 +5,64 @@
 <p>
     <?php
     class Task {
+
         public function Subj($subject){
-            return $this->subject = $subject;
+            return $subject;
         }
     }
+
     class DB{
         protected $server = '127.0.0.1';
         protected $user = 'root';
         protected $pass = 'astral';
         protected $data = 'todo_base';
-        protected $connection;
         public function __construct() {
-            $connection = new mysqli( $this->server, $this->user, $this->pass, $this->data );
+
+            $this->connection = new mysqli( $this->server, $this->user, $this->pass, $this->data );
+
             if ( mysqli_connect_errno() ) {
                 printf("Connection failed: %s\/", mysqli_connect_error());
+
                 exit();
             }
+            return $this->connection;
         }
     }
 
 
     class Repository extends DB
     {
-        function List()
+
+        public function List()
         {
-            $connection = new mysqli( $this->server, $this->user, $this->pass, $this->data );
             $res = "SELECT * FROM tasks";
-            $result = $connection->query($res);
+            $result = $this->connection->query($res);
             return $result;
         }
-        public function Save($subject)
-        {
-            $connection = new mysqli($this->server, $this->user, $this->pass, $this->data);
-            $sql = "INSERT INTO tasks (name) VALUES ('$subject')";
-            $connection->query($sql);
-        }
+
         public function New()
         {
-            return new Task();
+            $task = new Task;
+            return $task;
+        }
+
+        public function Save($Task)
+        {
+            $Task = new Task();
+            $sql = "INSERT INTO tasks (name) VALUES ($Task['name'])";
+            $this->connection->query($sql);
         }
     }
 
 
+
     $con = new Repository();
-    $tasks = $con->New();
-    $task = $tasks->Subj($_POST['task']);
-
     $list = $con->List();
-
     if (isset($_POST['submit'])) {
+
+        $tasks = $con->New();
+//        var_dump($tasks);
+        $task = $tasks->Subj($_POST['task']);
         if (!empty($task)) {
             $con->Save($task);
         }
@@ -68,14 +77,17 @@
     <label>Name of task</label>
     <input type="text" name="task" class="task">
 
+
     <button type="submit" name="submit" id="submit">Add Task</button>
 
 </form>
 
 <?php
+
 foreach ($list as $key => $value) {
     echo 'Tasks # '. $value['id']. 'Tasks name:' .$value['name'].'<br>';
 }
+
 ?>
 </p>
 </body>
