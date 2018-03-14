@@ -42,14 +42,14 @@
 
         public function New()
         {
-            $task = new Task;
-            return $task;
+            $this->task = new Task;
+            return $this->task;
         }
 
-        public function Save($Task)
+        public function Save($task)
         {
-            $Task = new Task();
-            $sql = "INSERT INTO tasks (name) VALUES ($Task['name'])";
+            $this->task = $task;
+            $sql = "INSERT INTO tasks (name) VALUES ('$this->task')";
             $this->connection->query($sql);
         }
     }
